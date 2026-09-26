@@ -1,0 +1,22 @@
+
+# secrets
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# deps/build
+node_modules/
+frontend/node_modules/
+backend/.venv/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.next/
+dist/
+build/
+.DS_Store
+*.log
+.turbo/
+EOF
