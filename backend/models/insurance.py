@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 class InsuranceTriggerEvaluation(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
-    storm_id: UUID
+    storm_id: UUID | str
     municipal_zone: str
     observed_wind_kmh: float
     observed_surge_m: float

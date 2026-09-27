@@ -213,17 +213,20 @@ class GEEProcessor:
 
         if self.gee_available:
             try:
-                result = await loop.run_in_executor(
-                    None,
-                    self._compute_gee_sync,
-                    lat,
-                    lon,
-                    surge_height_m,
-                    radius_km,
+                result = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None,
+                        self._compute_gee_sync,
+                        lat,
+                        lon,
+                        surge_height_m,
+                        radius_km,
+                    ),
+                    timeout=2.5,
                 )
                 return result
             except Exception as exc:
-                logger.error("Error executing GEE NASADEM inundation analysis (%s); invoking fallback.", exc)
+                logger.warning("GEE NASADEM inundation analysis timeout or error (%s); invoking fallback.", exc)
 
         return await loop.run_in_executor(
             None,

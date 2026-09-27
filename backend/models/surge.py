@@ -15,7 +15,7 @@ class FloodPolygonFeatureProperties(BaseModel):
 
 
 class SurgeSimulationRequest(BaseModel):
-    storm_id: UUID
+    storm_id: UUID | str | None = None
     lat: float
     lon: float
     max_wind_kmh: float
@@ -25,8 +25,8 @@ class SurgeSimulationRequest(BaseModel):
 class SurgeSimulationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
-    id: UUID
-    storm_id: UUID
+    id: UUID | str
+    storm_id: UUID | str
     surge_height_m: float
     flood_area_km2: float
     flood_polygon_geojson: dict[str, Any]

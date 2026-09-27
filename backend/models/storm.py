@@ -31,7 +31,7 @@ class StormCreate(BaseModel):
 class StormResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
-    id: UUID
+    id: UUID | str
     name: str
     basin: str
     category: str | None = None

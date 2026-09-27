@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict
 class InfrastructureResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
-    id: UUID
+    id: UUID | str
     osm_id: int | None = None
     name: str
     type: str
@@ -22,7 +22,7 @@ class InfrastructureResponse(BaseModel):
 class ExposureResultResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
-    infrastructure_id: UUID
+    infrastructure_id: UUID | str
     name: str
     type: str
     flood_depth_m: float

@@ -16,7 +16,7 @@ router = APIRouter(prefix="/alerts", tags=["Alerts"])
 
 
 class AlertDispatchRequest(BaseModel):
-    storm_id: UUID | None = None
+    storm_id: UUID | str | None = None
     alert_type: str = "CYCLONE_EMERGENCY"
     severity: str = "CRITICAL"
     message_en: str
@@ -28,12 +28,12 @@ class AlertDispatchRequest(BaseModel):
 class AlertResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
-    id: UUID
-    storm_id: UUID | None
+    id: UUID | str
+    storm_id: UUID | str | None = None
     alert_type: str
     severity: str
     message_en: str
-    message_local: str | None
+    message_local: str | None = None
     target_audience: str
     dispatch_channel: str
     dispatch_status: str
@@ -58,9 +58,16 @@ async def create_and_dispatch_alert(
     )
     dispatch_status = delivery_result.get("status", "delivered")
 
+    parsed_storm_id: UUID | None = None
+    if req.storm_id:
+        try:
+            parsed_storm_id = UUID(str(req.storm_id))
+        except (ValueError, TypeError, AttributeError):
+            parsed_storm_id = None
+
     db_alert = Alert(
         id=alert_id,
-        storm_id=req.storm_id,
+        storm_id=parsed_storm_id,
         alert_type=req.alert_type,
         severity=req.severity,
         message_en=req.message_en,

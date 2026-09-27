@@ -30,14 +30,45 @@ async def simulate_surge(
     and returns vector inundation polygons with 3D extrusion properties for Deck.gl frontend rendering.
     """
     # 1. Verify storm exists
-    stmt = select(Storm).where(Storm.id == req.storm_id)
-    res = await db.execute(stmt)
-    storm = res.scalar_one_or_none()
+    storm = None
+    if req.storm_id:
+        try:
+            storm_uuid = UUID(str(req.storm_id))
+            stmt = select(Storm).where(Storm.id == storm_uuid)
+            res = await db.execute(stmt)
+            storm = res.scalar_one_or_none()
+        except Exception:
+            storm = None
+
     if not storm:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Storm with ID {req.storm_id} does not exist",
+        stmt = select(Storm).where(Storm.status == "active").order_by(Storm.created_at.desc())
+        res = await db.execute(stmt)
+        storm = res.scalars().first()
+
+    if not storm:
+        from backend.services.storm_fetcher import StormFetcher
+        fani_create = StormFetcher.get_fani_2019_ground_truth()
+        storm = Storm(
+            id=uuid.uuid4(),
+            name=fani_create.name,
+            basin=fani_create.basin,
+            category=fani_create.category,
+            status="active",
+            current_lat=fani_create.current_lat,
+            current_lon=fani_create.current_lon,
+            max_wind_kmh=fani_create.max_wind_kmh,
+            central_pressure_hpa=fani_create.central_pressure_hpa,
+            predicted_landfall_lat=fani_create.predicted_landfall_lat,
+            predicted_landfall_lon=fani_create.predicted_landfall_lon,
+            predicted_landfall_time=fani_create.predicted_landfall_time,
+            track_geojson=fani_create.track_geojson,
+            source=fani_create.source,
         )
+        db.add(storm)
+        await db.commit()
+        await db.refresh(storm)
+
+    target_storm_id = storm.id
 
     # 2. Compute parametric surge height
     surge_height_m = calculate_parametric_surge_height(
@@ -74,7 +105,7 @@ async def simulate_surge(
 
     simulation = SurgeSimulation(
         id=sim_id,
-        storm_id=req.storm_id,
+        storm_id=target_storm_id,
         surge_height_m=surge_height_m,
         flood_polygon=geom_expr,
         flood_area_km2=flood_area,
@@ -89,7 +120,7 @@ async def simulate_surge(
 
     return SurgeSimulationResponse(
         id=sim_id,
-        storm_id=req.storm_id,
+        storm_id=target_storm_id,
         surge_height_m=surge_height_m,
         flood_area_km2=flood_area,
         flood_polygon_geojson=polygon_geojson,
