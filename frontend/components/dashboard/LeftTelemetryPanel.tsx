@@ -322,7 +322,7 @@ export default function LeftTelemetryPanel({
                       onChange={(e) =>
                         setSimulationParameters({ maxWind: Number(e.target.value) })
                       }
-                      className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg"
+                      className="w-full accent-blue-600 cursor-pointer h-2 touch-pan-x bg-slate-200 dark:bg-slate-700 rounded-lg py-1"
                     />
                   </div>
 
@@ -342,7 +342,7 @@ export default function LeftTelemetryPanel({
                       onChange={(e) =>
                         setSimulationParameters({ centralPressure: Number(e.target.value) })
                       }
-                      className="w-full accent-amber-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg"
+                      className="w-full accent-amber-600 cursor-pointer h-2 touch-pan-x bg-slate-200 dark:bg-slate-700 rounded-lg py-1"
                     />
                   </div>
                 </div>
@@ -351,7 +351,7 @@ export default function LeftTelemetryPanel({
                   onClick={() => runSurgeSimulation()}
                   disabled={isSimulating || loadingSimulation}
                   type="button"
-                  className="w-full py-2.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all disabled:opacity-50 cursor-pointer active:scale-[0.98]"
                 >
                   {isSimulating || loadingSimulation ? (
                     <>

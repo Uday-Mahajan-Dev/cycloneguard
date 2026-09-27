@@ -223,13 +223,13 @@ export default function RightIntelligencePanel({
                   return (
                     <div
                       key={name}
-                      className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2"
+                      className="w-full p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 text-xs"
                     >
-                      <div className="truncate">
-                        <div className="font-bold text-slate-800 dark:text-slate-200 truncate">
+                      <div className="truncate min-w-0 flex-1">
+                        <div className="font-bold text-slate-800 dark:text-slate-200 truncate text-xs">
                           {name}
                         </div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
                           Surge Depth:{" "}
                           <span
                             className={
@@ -248,7 +248,7 @@ export default function RightIntelligencePanel({
                       <button
                         onClick={() => toggleFeeder(name)}
                         type="button"
-                        className={`px-2.5 py-1 rounded text-[10px] font-bold transition-colors cursor-pointer shrink-0 ${
+                        className={`px-2.5 py-1 rounded text-[10px] font-bold transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                           isTripped
                             ? "bg-red-600 text-white hover:bg-red-700"
                             : isAtRisk

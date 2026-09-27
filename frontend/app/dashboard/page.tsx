@@ -359,7 +359,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 select-none">
+    <div className="min-h-screen lg:h-screen w-full lg:w-screen overflow-x-hidden flex flex-col bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 select-none">
       {/* Top HUD Bar */}
       <TopHUDBar
         engineMode={engineMode}
@@ -372,10 +372,10 @@ export default function DashboardPage() {
         loadingAnalysis={loadingAnalysis}
       />
 
-      {/* Main Viewport Container (Full-bleed Map + Absolute Floating Panels) */}
-      <div className="flex-1 w-full h-[calc(100vh-3.5rem)] relative overflow-hidden">
+      {/* Main Viewport Container (Mobile Stack + Desktop Full-bleed Command Center) */}
+      <div className="flex-1 w-full lg:h-[calc(100vh-3.5rem)] flex flex-col lg:block relative p-2 sm:p-3 lg:p-0 gap-3.5 sm:gap-4 overflow-y-auto lg:overflow-hidden overflow-x-hidden">
         {/* Full-Screen Map Container */}
-        <div className="absolute inset-0 z-0 w-full h-full">
+        <div className="w-full h-[380px] sm:h-[450px] lg:h-full lg:w-full lg:absolute lg:inset-0 lg:z-0 rounded-xl lg:rounded-none overflow-hidden relative shrink-0 shadow-md border border-slate-200 dark:border-slate-800 order-2 lg:order-none">
           <MapContainer
             ref={mapRef}
             storm={isMarineMode ? null : activeStorm}
@@ -392,7 +392,7 @@ export default function DashboardPage() {
 
         {/* Floating LIVE MARINE TELEMETRY HUD POPOVER */}
         {showMarineHUD && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 pointer-events-auto max-w-lg w-[92vw]">
+          <div className="w-full max-w-[95vw] sm:max-w-lg lg:absolute lg:top-3 lg:left-1/2 lg:-translate-x-1/2 z-30 pointer-events-auto order-1 lg:order-none mx-auto">
             <div className="bg-slate-950/92 backdrop-blur-xl border border-cyan-500/50 rounded-2xl p-3.5 shadow-2xl text-slate-100 font-mono text-xs space-y-2.5 animate-in fade-in slide-in-from-top-3 duration-250">
               {/* Header with animated live status */}
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -503,7 +503,7 @@ export default function DashboardPage() {
         )}
 
         {/* Floating Left Telemetry & Grid Monitor Panel */}
-        <div className="absolute top-3 left-4 w-[350px] max-h-[calc(100vh-4.75rem)] overflow-y-auto pointer-events-auto z-10 space-y-3 pr-1 scrollbar-thin">
+        <div className="w-full lg:w-[350px] lg:absolute lg:top-3 lg:left-4 lg:max-h-[calc(100vh-4.75rem)] lg:overflow-y-auto pointer-events-auto z-10 space-y-3 lg:pr-1 scrollbar-thin order-3 lg:order-none">
           <LeftTelemetryPanel
             storm={
               isMarineMode
@@ -545,7 +545,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Floating Right Intelligence Panel */}
-        <div className="absolute top-3 right-4 w-[350px] max-h-[calc(100vh-4.75rem)] overflow-y-auto pointer-events-auto z-10 space-y-3 pr-1 scrollbar-thin">
+        <div className="w-full lg:w-[350px] lg:absolute lg:top-3 lg:right-4 lg:max-h-[calc(100vh-4.75rem)] lg:overflow-y-auto pointer-events-auto z-10 space-y-3 lg:pr-1 scrollbar-thin order-4 lg:order-none">
           <RightIntelligencePanel
             analysis={analysis}
             insurance={insurance}
@@ -558,8 +558,8 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Streaming Live Dispatch Terminal (Bottom-Right over Map) */}
-        <div className="absolute bottom-3 right-4 z-20 pointer-events-auto hidden md:block w-96 max-w-sm">
+        {/* Streaming Live Dispatch Terminal (Bottom-Right over Map on Desktop) */}
+        <div className="absolute bottom-3 right-4 z-20 pointer-events-auto hidden lg:block w-96 max-w-sm">
           <LiveTerminalFeed />
         </div>
       </div>

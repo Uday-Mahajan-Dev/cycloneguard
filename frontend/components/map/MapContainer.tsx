@@ -238,13 +238,20 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
       timestamps: liveRadarTimestamps,
     } = useRainViewerTiles();
 
-    // Radar playback loop state
+    // Radar playback loop state (collapsed on mobile by default to keep 3D map clean)
     const [radarTimestamps, setRadarTimestamps] = useState<number[]>([
       1711365000, 1711365600, 1711366200, 1711366800, 1711368000,
     ]);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(4);
     const [isPlayingRadar, setIsPlayingRadar] = useState(false);
-    const [showRadarPlayer, setShowRadarPlayer] = useState(true);
+    const [showRadarPlayer, setShowRadarPlayer] = useState(false);
+
+    // Auto-open on desktop screens only (>= 768px)
+    useEffect(() => {
+      if (typeof window !== "undefined" && window.innerWidth >= 768) {
+        setShowRadarPlayer(true);
+      }
+    }, []);
 
     const [pitchVal, setPitchVal] = useState(42);
     const [bearingVal, setBearingVal] = useState(-15);
@@ -395,20 +402,19 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
             </svg>
             <span style="position: relative; z-index: 5; color: #ffffff; font-weight: 900; font-size: 11px; text-shadow: 0 2px 4px rgba(0,0,0,0.9); font-family: monospace;">EYE</span>
           </div>
-
-          <!-- Floating Tactical HUD Box Above Current Eye -->
-          <div style="position: absolute; left: -115px; bottom: 32px; width: 230px; padding: 6px 10px; background: rgba(15, 23, 42, 0.95); border: 2px solid #ef4444; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.9), 0 0 20px rgba(239, 68, 68, 0.5); text-align: center; backdrop-filter: blur(8px); z-index: 40; pointer-events: auto;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; color: #ef4444; font-weight: 900; font-size: 11px; letter-spacing: 0.05em;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: #ef4444; box-shadow: 0 0 8px #ef4444;" class="animate-ping"></span>
-              CURRENT STORM POSITION
+          <!-- Floating Compact Tactical HUD Box Above Current Eye -->
+          <div style="position: absolute; left: -95px; bottom: 26px; width: 190px; padding: 4px 6px; background: rgba(15, 23, 42, 0.94); border: 1.5px solid #ef4444; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.85), 0 0 12px rgba(239, 68, 68, 0.4); text-align: center; backdrop-filter: blur(8px); z-index: 40; pointer-events: auto;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; color: #ef4444; font-weight: 800; font-size: 9.5px; letter-spacing: 0.04em;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #ef4444;" class="animate-ping"></span>
+              CURRENT STORM EYE
             </div>
-            <div style="color: #f8fafc; font-weight: 800; font-size: 12px; margin-top: 1px;">
+            <div style="color: #f8fafc; font-weight: 700; font-size: 11px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               ${storm?.name || "Active System SYS-91B"}
             </div>
-            <div style="display: flex; justify-content: center; gap: 8px; color: #cbd5e1; font-size: 10px; margin-top: 2px; font-weight: 600; font-family: monospace;">
+            <div style="display: flex; justify-content: center; gap: 6px; color: #cbd5e1; font-size: 9px; margin-top: 2px; font-weight: 600; font-family: monospace;">
               <span>💨 ${storm?.max_wind_kmh || 186} km/h</span>
-              <span>🌊 Surge 3.5m</span>
-              <span>📍 ${currentLat.toFixed(2)}°N, ${currentLon.toFixed(2)}°E</span>
+              <span>🌊 3.5m</span>
+              <span>📍 ${currentLat.toFixed(1)}°N</span>
             </div>
           </div>
         `;
@@ -1452,13 +1458,13 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
     ]);
 
     return (
-      <div className="relative w-full h-full min-h-[500px] overflow-hidden bg-slate-950">
+      <div className="relative w-full h-full min-h-[350px] sm:min-h-[420px] lg:min-h-full overflow-hidden bg-slate-950">
         {/* Full-bleed MapLibre WebGL Canvas */}
         <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
 
-        {/* Floating Top Radar Playback Control Widget */}
-        {showRadarPlayer && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-auto hidden md:block">
+        {/* Floating Top Radar Playback Control Widget & Re-open Trigger */}
+        {showRadarPlayer ? (
+          <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-auto w-[92vw] max-w-[360px] sm:max-w-[400px]">
             <LiveRadarPlayback
               isPlaying={isPlayingRadar}
               onTogglePlay={() => setIsPlayingRadar(!isPlayingRadar)}
@@ -1475,7 +1481,20 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
               onToggleCycloneOverlay={() =>
                 setIsCycloneSatelliteOverlay(!isCycloneSatelliteOverlay)
               }
+              onClose={() => setShowRadarPlayer(false)}
             />
+          </div>
+        ) : (
+          <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20 pointer-events-auto">
+            <button
+              onClick={() => setShowRadarPlayer(true)}
+              type="button"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md border border-slate-700/80 hover:border-cyan-500/60 text-cyan-300 font-mono text-[10px] sm:text-[11px] font-bold shadow-xl transition-all cursor-pointer"
+              title="Open Live Doppler Radar & Weather Playback Controls"
+            >
+              <CloudRain className="w-3.5 h-3.5 text-emerald-400 animate-pulse shrink-0" />
+              <span>📡 Radar Controls</span>
+            </button>
           </div>
         )}
 
@@ -1492,40 +1511,40 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
           </button>
         </div>
 
-        {/* Tactical Floating HUD Controls (Bottom Center) */}
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 pointer-events-auto max-w-[95vw] overflow-x-auto p-1">
-          <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-xl px-3 py-1.5 shadow-2xl flex items-center gap-2 text-xs font-mono text-slate-200 shrink-0">
+        {/* Tactical Floating HUD Controls (Bottom Center with Smooth Touch Swipe) */}
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 sm:gap-2 pointer-events-auto max-w-[96vw] overflow-x-auto p-1 no-scrollbar">
+          <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 shadow-2xl flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs font-mono text-slate-200 shrink-0 whitespace-nowrap">
             {/* Compass / Orientation */}
-            <div className="flex items-center gap-1.5 px-2 py-0.5 border-r border-slate-700">
-              <Compass className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 border-r border-slate-700">
+              <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
               <span>{bearingVal}°</span>
             </div>
 
             {/* Pitch Gauge */}
-            <div className="flex items-center gap-1.5 px-2 py-0.5 border-r border-slate-700 text-cyan-300">
+            <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 border-r border-slate-700 text-cyan-300">
               <span>PITCH: {pitchVal}°</span>
             </div>
 
             {/* Basemap Switcher (Satellite / Dark) */}
-            <div className="flex items-center gap-1 px-2 border-r border-slate-700">
+            <div className="flex items-center gap-1 px-1.5 sm:px-2 border-r border-slate-700">
               <button
                 onClick={() => handleSwitchBasemap("satellite")}
                 type="button"
-                className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
+                className={`px-2 py-1 rounded text-[10px] sm:text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
                   basemapMode === "satellite"
                     ? "bg-blue-600 text-white shadow-sm"
                     : "text-slate-400 hover:text-white"
                 }`}
                 title="High-Resolution Satellite Imagery"
               >
-                <Globe2 className="w-3 h-3" />
+                <Globe2 className="w-3 h-3 shrink-0" />
                 <span>SATELLITE</span>
               </button>
 
               <button
                 onClick={() => handleSwitchBasemap("dark")}
                 type="button"
-                className={`px-2 py-1 rounded text-[11px] font-bold transition-colors cursor-pointer ${
+                className={`px-2 py-1 rounded text-[10px] sm:text-[11px] font-bold transition-colors cursor-pointer ${
                   basemapMode === "dark"
                     ? "bg-slate-700 text-white shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -1540,14 +1559,14 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
             <button
               onClick={() => setIsNasaClouds(!isNasaClouds)}
               type="button"
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
                 isNasaClouds
                   ? "bg-amber-500 text-slate-950 font-bold shadow-sm"
                   : "bg-slate-800 text-slate-400 hover:bg-slate-700"
               }`}
               title="Toggle NASA GIBS Satellite Clouds"
             >
-              <CloudSun className="w-3.5 h-3.5" />
+              <CloudSun className="w-3.5 h-3.5 shrink-0" />
               <span>NASA CLOUDS</span>
             </button>
 
@@ -1555,14 +1574,14 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
             <button
               onClick={() => setIsLiveRadar(!isLiveRadar)}
               type="button"
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
                 isLiveRadar
                   ? "bg-emerald-500 text-slate-950 font-bold shadow-sm"
                   : "bg-slate-800 text-slate-400 hover:bg-slate-700"
               }`}
               title="Toggle RainViewer Live Doppler Radar / Universal Satellite"
             >
-              <CloudRain className="w-3.5 h-3.5" />
+              <CloudRain className="w-3.5 h-3.5 shrink-0" />
               <span>LIVE RADAR</span>
             </button>
 
@@ -1570,14 +1589,14 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
             <button
               onClick={onToggle3dTerrain}
               type="button"
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
                 is3dTerrain
                   ? "bg-cyan-500 text-slate-950 font-bold shadow-sm"
                   : "bg-slate-800 text-slate-400 hover:bg-slate-700"
               }`}
               title="AWS Terrarium 3D Elevation Mesh (3.0x Exaggeration)"
             >
-              <Layers className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5 shrink-0" />
               <span>3D TERRAIN {is3dTerrain ? "3.0X" : "OFF"}</span>
             </button>
 
@@ -1585,14 +1604,14 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
             <button
               onClick={() => setIs3dBuildings(!is3dBuildings)}
               type="button"
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer ${
                 is3dBuildings
                   ? "bg-indigo-600 text-white font-bold shadow-sm"
                   : "bg-slate-800 text-slate-400 hover:bg-slate-700"
               }`}
               title="Toggle 3D Extruded Building Footprints"
             >
-              <Building2 className="w-3.5 h-3.5" />
+              <Building2 className="w-3.5 h-3.5 shrink-0" />
               <span>3D BUILDINGS</span>
             </button>
 
@@ -1600,10 +1619,10 @@ const MapContainer = forwardRef<MapContainerRef, MapContainerProps>(
             <button
               onClick={recenterOnStorm}
               type="button"
-              className="p-1.5 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-700/60 text-red-300 transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+              className="p-1.5 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-700/60 text-red-300 transition-colors cursor-pointer flex items-center gap-1 text-[10px] sm:text-[11px] font-bold"
               title="Recenter on Cyclone Fani Threat Zone"
             >
-              <Crosshair className="w-3.5 h-3.5 text-red-400" />
+              <Crosshair className="w-3.5 h-3.5 text-red-400 shrink-0" />
               <span className="hidden sm:inline">RECENTER</span>
             </button>
 
