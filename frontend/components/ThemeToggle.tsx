@@ -40,7 +40,7 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   if (!mounted) {
     return (
       <div
-        className={`w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 ${className}`}
+        className={`w-7 sm:w-9 h-7 sm:h-9 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0 ${className}`}
       />
     );
   }
@@ -49,7 +49,7 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
     <button
       onClick={toggleTheme}
       type="button"
-      className={`relative p-2 rounded-lg transition-all duration-200 border cursor-pointer ${
+      className={`relative p-1.5 sm:p-2 rounded-lg transition-all duration-200 border cursor-pointer shrink-0 ${
         isDark
           ? "bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700 hover:text-amber-300 shadow-sm"
           : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 shadow-sm"
@@ -58,9 +58,9 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
       aria-label="Toggle Theme"
     >
       {isDark ? (
-        <Sun className="w-4 h-4 transition-transform duration-300 rotate-0" />
+        <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 rotate-0" />
       ) : (
-        <Moon className="w-4 h-4 transition-transform duration-300 rotate-0" />
+        <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 rotate-0" />
       )}
     </button>
   );

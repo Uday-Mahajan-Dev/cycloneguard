@@ -80,15 +80,15 @@ export default function TopHUDBar({
   ];
 
   return (
-    <header className="w-full max-w-full h-14 z-30 px-2 sm:px-3 md:px-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-1.5 sm:gap-2.5 text-xs select-none overflow-x-hidden relative">
+    <header className="w-full max-w-full h-14 z-30 px-2 sm:px-3 md:px-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-1 sm:gap-2 text-xs select-none overflow-x-hidden relative">
       {/* Brand & Live Incident Command Crest */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group">
-          <div className="relative flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white shadow-sm dark:bg-blue-950 dark:border dark:border-blue-700/60 dark:text-cyan-400">
+          <div className="relative flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white shadow-sm dark:bg-blue-950 dark:border dark:border-blue-700/60 dark:text-cyan-400 shrink-0">
             <Radar className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-red-500 animate-ping" />
           </div>
-          <div className="hidden sm:block">
+          <div className="hidden md:block">
             <div className="flex items-center gap-1.5 leading-none">
               <span className="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white uppercase">
                 Cyclone<span className="text-blue-600 dark:text-cyan-400">Guard</span>
@@ -105,27 +105,27 @@ export default function TopHUDBar({
       </div>
 
       {/* Center Operational Controls: Active Sector Dropdown & Quick Actions */}
-      <div className="flex items-center gap-1 sm:gap-2 shrink min-w-0">
+      <div className="flex items-center gap-1 sm:gap-1.5 shrink min-w-0">
         {/* Active Sector Dropdown Selector */}
-        <div className="relative">
+        <div className="relative shrink">
           <button
             onClick={() => setIsSectorDropdownOpen(!isSectorDropdownOpen)}
             disabled={loadingMode}
             type="button"
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-all shadow-inner cursor-pointer text-[11px] sm:text-xs"
+            className="flex items-center gap-1 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-all shadow-inner cursor-pointer text-[10px] sm:text-xs shrink"
           >
             {loadingMode ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400 shrink-0" />
             ) : (
               <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
             )}
             <span className="font-bold text-blue-700 dark:text-cyan-300 shrink-0">
-              {currentSector.codeName}:
+              {currentSector.codeName}
             </span>
-            <span className="truncate max-w-[70px] xs:max-w-[110px] sm:max-w-[160px] md:max-w-[200px]">
-              {currentSector.name}
+            <span className="hidden sm:inline truncate max-w-[100px] md:max-w-[160px] lg:max-w-[220px]">
+              : {currentSector.name.split("(")[0]}
             </span>
-            <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 ml-0.5 shrink-0" />
+            <ChevronDown className="w-3 h-3 text-slate-400 ml-0.5 shrink-0" />
           </button>
 
           {/* Sectors Dropdown Menu */}
@@ -169,11 +169,11 @@ export default function TopHUDBar({
           <button
             onClick={onOpenAlertModal}
             type="button"
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] sm:text-xs shadow-md transition-all cursor-pointer shrink-0"
+            className="flex items-center gap-1 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-[10px] sm:text-xs shadow-md transition-all cursor-pointer shrink-0"
             title="Dispatch Public Common Alerting Protocol (CAP) Warning"
           >
-            <Send className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">CAP Alert</span>
+            <Send className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden sm:inline">CAP Alert</span>
           </button>
         )}
 
@@ -183,15 +183,15 @@ export default function TopHUDBar({
             onClick={onTriggerGeminiAnalysis}
             disabled={loadingAnalysis}
             type="button"
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] sm:text-xs shadow-md transition-all cursor-pointer shrink-0"
+            className="flex items-center gap-1 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[10px] sm:text-xs shadow-md transition-all cursor-pointer shrink-0"
             title="Trigger Gemini 2.5 Flash Cascade Risk Re-Analysis"
           >
             {loadingAnalysis ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
             ) : (
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
             )}
-            <span className="hidden xl:inline">AI Analyze</span>
+            <span className="hidden sm:inline">AI Analyze</span>
           </button>
         )}
 
@@ -200,7 +200,7 @@ export default function TopHUDBar({
           <button
             onClick={onToggleMarineHUD}
             type="button"
-            className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all border cursor-pointer shrink-0 ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold transition-all border cursor-pointer shrink-0 ${
               isMarineHUDOpen || engineMode === "live"
                 ? "bg-emerald-950/80 border-emerald-500/80 text-emerald-300 shadow-md"
                 : "bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -208,28 +208,28 @@ export default function TopHUDBar({
             title="Toggle Live Real-Time Marine Telemetry HUD"
           >
             <Radio
-              className={`w-3.5 h-3.5 ${
+              className={`w-3.5 h-3.5 shrink-0 ${
                 isMarineHUDOpen || engineMode === "live"
                   ? "text-emerald-400 animate-pulse"
                   : "text-slate-400"
               }`}
             />
-            <span className="hidden md:inline">Marine</span>
+            <span className="hidden sm:inline">Marine</span>
             <div
-              className={`w-5 sm:w-6 h-2.5 sm:h-3 flex items-center rounded-full p-0.5 transition-colors ${
+              className={`w-4 sm:w-6 h-2 sm:h-3 flex items-center rounded-full p-0.5 transition-colors shrink-0 ${
                 isMarineHUDOpen || engineMode === "live"
                   ? "bg-emerald-500 justify-end"
                   : "bg-slate-300 dark:bg-slate-700 justify-start"
               }`}
             >
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white shadow-sm" />
+              <div className="w-1 sm:w-2 h-1 sm:h-2 rounded-full bg-white shadow-sm" />
             </div>
           </button>
         )}
       </div>
 
       {/* Right Controls: Role Switcher, Navigation, Theme Toggle, User Profile */}
-      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         {/* Evaluator Role Switcher (Desktop 2XL only) */}
         <div className="hidden 2xl:flex items-center gap-0.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
           <span className="text-[10px] uppercase font-bold text-slate-400 px-1 flex items-center gap-1">
