@@ -78,8 +78,7 @@ During severe tropical cyclones in the Bay of Bengal and Arabian Sea, **infrastr
 
 ## 🏗️ System Architecture
 
-```mermaid
-graph TD
+
     A[Public Weather Feeds<br/>Open-Meteo / NOAA] -->|Async Polling| B[FastAPI Backend<br/>Render.com]
     C[Google Earth Engine<br/>NASADEM 30m DEM] -->|Surge Polygon Mask| B
     
